@@ -4,14 +4,18 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#ifndef CUUTEST_MAX_GROUP_DEPTH
+#define CUUTEST_MAX_GROUP_DEPTH (8)
+#endif
+
+#ifndef CUUTEST_NO_ALIASES
+#define CUUTEST_NO_ALIASES 0
+#endif
+
 #ifdef __GNUC__
 #define CUUTEST_ATTRIBUTE(attribute) __attribute__((attribute))
 #else
 #define CUUTEST_ATTRIBUTE(attribute)
-#endif
-
-#ifndef CUUTEST_MAX_GROUP_DEPTH
-#define CUUTEST_MAX_GROUP_DEPTH (8)
 #endif
 
 #define cuu_test(test_name) void cuu_test_function_##test_name(void)
@@ -37,10 +41,6 @@ void cuu_impl_group_start(const char *format, ...)
     CUUTEST_ATTRIBUTE(format(printf, 1, 2));
 
 void cuu_impl_group_end(void);
-
-#define describe cuu_group
-#define context cuu_group
-#define it cuu_group
 
 #define must(pred)                                                             \
     do {                                                                       \
@@ -148,5 +148,15 @@ bool cuu_impl_pred_cond_ends_with(const char *actual,
                                   const char *expected_suffix);
 #define cuu_impl_pred_desc_ends_with(actual, expected_suffix)                  \
 #actual " ends with " #expected_suffix
+
+#define cuu_describe cuu_group
+#define cuu_context cuu_group
+#define cuu_it cuu_group
+
+#if !CUUTEST_NO_ALIASES
+#define describe cuu_describe
+#define context cuu_context
+#define it cuu_it
+#endif
 
 #endif // INCLUDE_CUUTEST_H
