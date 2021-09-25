@@ -14,7 +14,7 @@ endif (NOT CMAKE_BUILD_TYPE)
 project(cuutest VERSION 0.1.0 LANGUAGES C)
 
 add_library(cuutest cuutest.c)
-target_include_directories(cuutest PUBLIC ${CMAKE_SOURCE_DIR})
+target_include_directories(cuutest PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 if(CUUTEST_EXAMPLE)
     add_executable(example example.c)
