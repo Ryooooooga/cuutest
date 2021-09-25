@@ -181,6 +181,15 @@ void cuu_impl_should(bool ok, const char *desc, const char *file,
     }
 }
 
+void cuu_impl_fail(const char *file, unsigned long long line, const char *fmt,
+                   ...) {
+    cuu_indent();
+    CUU_OUTPUT(CUU_COLOR_ERROR "fail! - ");
+    CUU_VOUTPUT(fmt, fmt);
+    CUU_OUTPUT(CUU_ANSI_RESET " at %s:%llu\n", file, line);
+    cuu_check_error();
+}
+
 bool cuu_impl_pred_cond_to_be_true(bool actual) { return actual; }
 bool cuu_impl_pred_cond_to_be_false(bool actual) { return !actual; }
 

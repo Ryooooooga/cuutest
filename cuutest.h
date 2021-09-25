@@ -42,28 +42,37 @@ void cuu_impl_group_start(const char *format, ...)
 
 void cuu_impl_group_end(void);
 
-#define must(pred)                                                             \
-    do {                                                                       \
+#define cuu_must(pred)                                                         \
+    {                                                                          \
         bool _cuu_ok = cuu_impl_pred_cond_##pred;                              \
         const char *_cuu_desc = cuu_impl_pred_desc_##pred;                     \
         cuu_impl_must(_cuu_ok, _cuu_desc, __FILE__, __LINE__);                 \
         if (!_cuu_ok) {                                                        \
             continue;                                                          \
         }                                                                      \
-    } while (0)
+    }
 
-#define should(pred)                                                           \
+#define cuu_should(pred)                                                       \
     do {                                                                       \
         bool _cuu_ok = cuu_impl_pred_cond_##pred;                              \
         const char *_cuu_desc = cuu_impl_pred_desc_##pred;                     \
         cuu_impl_should(_cuu_ok, _cuu_desc, __FILE__, __LINE__);               \
     } while (0)
 
+#define cuu_fail(...)                                                          \
+    {                                                                          \
+        cuu_impl_fail(__FILE__, __LINE__, __VA_ARGS__);                        \
+        continue;                                                              \
+    }
+
 void cuu_impl_must(bool ok, const char *desc, const char *file,
                    unsigned long long line);
 
 void cuu_impl_should(bool ok, const char *desc, const char *file,
                      unsigned long long line);
+
+void cuu_impl_fail(const char *file, unsigned long long line, const char *fmt,
+                   ...) CUUTEST_ATTRIBUTE(format(printf, 3, 4));
 
 // to_be_true(x)
 bool cuu_impl_pred_cond_to_be_true(bool actual);
@@ -154,6 +163,8 @@ bool cuu_impl_pred_cond_ends_with(const char *actual,
 #define cuu_it cuu_group
 
 #if !CUUTEST_NO_ALIASES
+#define must cuu_must
+#define should cuu_should
 #define describe cuu_describe
 #define context cuu_context
 #define it cuu_it

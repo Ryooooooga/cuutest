@@ -1,5 +1,7 @@
 #include "cuutest.h"
 
+#include <stdio.h>
+
 int factorial(int a) {
     int r = 1;
     for (int i = 1; i <= a; i++) {
@@ -68,6 +70,14 @@ cuu_test(other) {
             should(to_be(f, <=, 3.2));
         }
     }
+
+#if 0
+    describe("fail") {
+        cuu_fail("fail test");
+        // never reached
+        fprintf(stderr, "never reached here\n");
+    }
+#endif
 }
 
 int main(void) {
