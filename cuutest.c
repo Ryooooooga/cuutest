@@ -190,22 +190,20 @@ void cuu_impl_fail(const char *file, unsigned long long line, const char *fmt,
     cuu_check_error();
 }
 
-bool cuu_impl_pred_cond_to_be_true(bool actual) { return actual; }
-bool cuu_impl_pred_cond_to_be_false(bool actual) { return !actual; }
+bool cuu_impl_pred_cond_be_true(bool actual) { return actual; }
+bool cuu_impl_pred_cond_be_false(bool actual) { return !actual; }
 
-bool cuu_impl_pred_cond_to_be_null(const void *actual) {
-    return actual == NULL;
-}
+bool cuu_impl_pred_cond_be_null(const void *actual) { return actual == NULL; }
 
-bool cuu_impl_pred_cond_to_be_str(const char *actual, const char *expected) {
+bool cuu_impl_pred_cond_be_str(const char *actual, const char *expected) {
     assert(expected != NULL);
     if (actual == NULL)
         return false;
     return strcmp(actual, expected) == 0;
 }
 
-bool cuu_impl_pred_cond_to_be_str_n(const char *actual, size_t actual_len,
-                                    const char *expected) {
+bool cuu_impl_pred_cond_be_str_n(const char *actual, size_t actual_len,
+                                 const char *expected) {
     assert(expected != NULL);
     if (actual == NULL && actual_len > 0)
         return false;
@@ -213,23 +211,23 @@ bool cuu_impl_pred_cond_to_be_str_n(const char *actual, size_t actual_len,
            strncmp(actual, expected, actual_len) == 0;
 }
 
-bool cuu_impl_pred_cond_contains(const char *actual, const char *expected) {
+bool cuu_impl_pred_cond_contain(const char *actual, const char *expected) {
     assert(expected != NULL);
     if (actual == NULL)
         return false;
     return strstr(actual, expected) != NULL;
 }
 
-bool cuu_impl_pred_cond_starts_with(const char *actual,
-                                    const char *expected_prefix) {
+bool cuu_impl_pred_cond_start_with(const char *actual,
+                                   const char *expected_prefix) {
     assert(expected_prefix);
     if (actual == NULL)
         return false;
     return strncmp(actual, expected_prefix, strlen(expected_prefix)) == 0;
 }
 
-bool cuu_impl_pred_cond_ends_with(const char *actual,
-                                  const char *expected_suffix) {
+bool cuu_impl_pred_cond_end_with(const char *actual,
+                                 const char *expected_suffix) {
     assert(expected_suffix);
     if (actual == NULL)
         return false;
