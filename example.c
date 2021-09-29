@@ -43,12 +43,14 @@ cuu_test(other) {
             int i = 42;
 
             should(i, eq(42));
+            should(i, ne(0));
             should(i, gt(41));
             should(i, ge(42));
             should(i, lt(43));
             should(i, le(42));
             // same as
             should(i, be(==, 42));
+            should(i, be(!=, 0));
             should(i, be(>, 41));
             should(i, be(>=, 42));
             should(i, be(<, 43));

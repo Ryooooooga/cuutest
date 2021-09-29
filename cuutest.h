@@ -126,6 +126,9 @@ bool cuu_impl_pred_cond_be_null(const void *actual);
 // eq(x)
 #define CUUTEST_PRED_eq(x) CUUTEST_PRED_be(==, x)
 
+// ne(x)
+#define CUUTEST_PRED_ne(x) CUUTEST_PRED_be(!=, x)
+
 // gt(x)
 #define CUUTEST_PRED_gt(x) CUUTEST_PRED_be(>, x)
 
