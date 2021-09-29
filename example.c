@@ -12,9 +12,9 @@ int factorial(int a) {
 
 cuu_test(factorial) {
     it("should return a valid result") {
-        should(be_a(factorial(0), 1));
-        should(be_a(factorial(1), 1));
-        should(be_a(factorial(5), 120));
+        should(factorial(0), be_a(1));
+        should(factorial(1), be_a(1));
+        should(factorial(5), be_a(120));
     }
 }
 
@@ -22,58 +22,58 @@ cuu_test(other) {
     describe("string predicates") {
         const char *s = "Hello, world!";
 
-        must(not(be_null(s)));
+        must(s, not(be_null));
 
-        should(be_str(s, "Hello, world!"));
-        should(be_str_n(s, 6, "Hello,"));
-        should(contain(s, "lo"));
-        should(start_with(s, "Hell"));
-        should(end_with(s, "!"));
+        should(s, be_str("Hello, world!"));
+        should(cuu_str_n(s, 6), be_str("Hello,"));
+        should(s, contain("lo"));
+        should(s, start_with("Hell"));
+        should(s, end_with("!"));
     }
 
     describe("boolean predicates") {
         bool c = true;
 
-        should(be_true(c));
-        should(be_false(!c));
+        should(c, be_true);
+        should(!c, be_false);
     }
 
     describe("numeric predicates") {
         it("int") {
             int i = 42;
 
-            should(be_a(i, 42));
-
-            should(be_gt(i, 41));
-            should(be_ge(i, 42));
-            should(be_lt(i, 43));
-            should(be_le(i, 42));
+            should(i, be_a(42));
+            should(i, be_gt(41));
+            should(i, be_ge(42));
+            should(i, be_lt(43));
+            should(i, be_le(42));
             // same as
-            should(be(i, >, 41));
-            should(be(i, >=, 42));
-            should(be(i, <, 43));
-            should(be(i, <=, 42));
+            should(i, be(==, 42));
+            should(i, be(>, 41));
+            should(i, be(>=, 42));
+            should(i, be(<, 43));
+            should(i, be(<=, 42));
         }
         it("double") {
             double f = 3.14159265;
 
-            should(be_near(f, 3.1416, 0.0001));
+            should(f, be_near(3.1416, 0.0001));
 
-            should(be_gt(f, 3.1));
-            should(be_ge(f, 3.1));
-            should(be_lt(f, 3.2));
-            should(be_le(f, 3.2));
+            should(f, be_gt(3.1));
+            should(f, be_ge(3.1));
+            should(f, be_lt(3.2));
+            should(f, be_le(3.2));
             // same as
-            should(be(f, >, 3.1));
-            should(be(f, >=, 3.1));
-            should(be(f, <, 3.2));
-            should(be(f, <=, 3.2));
+            should(f, be(>, 3.1));
+            should(f, be(>=, 3.1));
+            should(f, be(<, 3.2));
+            should(f, be(<=, 3.2));
         }
     }
 
 #if 0
-    describe("fail") {
-        cuu_fail("fail test");
+    describe("cuu_fail()") {
+        cuu_fail("always fail");
         // never reached
         fprintf(stderr, "never reached here\n");
     }

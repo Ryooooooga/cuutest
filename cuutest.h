@@ -42,121 +42,155 @@ void cuu_impl_group_start(const char *format, ...)
 
 void cuu_impl_group_end(void);
 
-#define cuu_must(pred)                                                         \
+// must(actual, ...)
+#define cuu_must(actual, pred) CUUTEST_MUST(actual, CUUTEST_PRED_##pred)
+
+#define CUUTEST_MUST(actual, pred) CUUTEST_MUST_I(actual, pred)
+#define CUUTEST_MUST_I(actual, cond, desc, ...)                                \
     {                                                                          \
-        bool _cuu_ok = cuu_impl_pred_cond_##pred;                              \
-        const char *_cuu_desc = cuu_impl_pred_desc_##pred;                     \
+        bool _cuu_ok = (cond(actual, __VA_ARGS__));                            \
+        const char *_cuu_desc = (desc(actual, __VA_ARGS__));                   \
         cuu_impl_must(_cuu_ok, _cuu_desc, __FILE__, __LINE__);                 \
         if (!_cuu_ok) {                                                        \
             continue;                                                          \
         }                                                                      \
     }
 
-#define cuu_should(pred)                                                       \
+void cuu_impl_must(bool ok, const char *desc, const char *file,
+                   unsigned long long line);
+
+// should(actual, ...)
+#define cuu_should(actual, pred) CUUTEST_SHOULD(actual, CUUTEST_PRED_##pred)
+
+#define CUUTEST_SHOULD(actual, pred) CUUTEST_SHOULD_I(actual, pred)
+#define CUUTEST_SHOULD_I(actual, cond, desc, ...)                              \
     do {                                                                       \
-        bool _cuu_ok = cuu_impl_pred_cond_##pred;                              \
-        const char *_cuu_desc = cuu_impl_pred_desc_##pred;                     \
+        bool _cuu_ok = (cond(actual, __VA_ARGS__));                            \
+        const char *_cuu_desc = (desc(actual, __VA_ARGS__));                   \
         cuu_impl_should(_cuu_ok, _cuu_desc, __FILE__, __LINE__);               \
     } while (0)
 
+void cuu_impl_should(bool ok, const char *desc, const char *file,
+                     unsigned long long line);
+
+// fail(message)
 #define cuu_fail(...)                                                          \
     {                                                                          \
         cuu_impl_fail(__FILE__, __LINE__, __VA_ARGS__);                        \
         continue;                                                              \
     }
 
-void cuu_impl_must(bool ok, const char *desc, const char *file,
-                   unsigned long long line);
-
-void cuu_impl_should(bool ok, const char *desc, const char *file,
-                     unsigned long long line);
-
 void cuu_impl_fail(const char *file, unsigned long long line, const char *fmt,
                    ...) CUUTEST_ATTRIBUTE(format(printf, 3, 4));
 
-// be_true(x)
+// be_true
+#define CUUTEST_PRED_be_true                                                   \
+    CUUTEST_PRED_COND_be_true, CUUTEST_PRED_DESC_be_true, _
+#define CUUTEST_PRED_COND_be_true(actual, _)                                   \
+    (cuu_impl_pred_cond_be_true((actual)))
+#define CUUTEST_PRED_DESC_be_true(actual, _) #actual " == true"
+
 bool cuu_impl_pred_cond_be_true(bool actual);
-#define cuu_impl_pred_desc_be_true(actual) #actual " == true"
 
-// be_false(x)
+// be_false
+#define CUUTEST_PRED_be_false                                                  \
+    CUUTEST_PRED_COND_be_false, CUUTEST_PRED_DESC_be_false, _
+#define CUUTEST_PRED_COND_be_false(actual, _)                                  \
+    (cuu_impl_pred_cond_be_false((actual)))
+#define CUUTEST_PRED_DESC_be_false(actual, _) #actual " == false"
+
 bool cuu_impl_pred_cond_be_false(bool actual);
-#define cuu_impl_pred_desc_be_false(actual) #actual " == false"
 
-// be_null(x)
+// be_null
+#define CUUTEST_PRED_be_null                                                   \
+    CUUTEST_PRED_COND_be_null, CUUTEST_PRED_DESC_be_null, _
+#define CUUTEST_PRED_COND_be_null(actual, _)                                   \
+    (cuu_impl_pred_cond_be_null((actual)))
+#define CUUTEST_PRED_DESC_be_null(actual, _) #actual " == null"
+
 bool cuu_impl_pred_cond_be_null(const void *actual);
-#define cuu_impl_pred_desc_be_null(actual) #actual " == null"
 
 // not(pred)
-#define cuu_impl_pred_cond_not(pred) (!(cuu_impl_pred_cond_##pred))
-#define cuu_impl_pred_desc_not(pred) "not " cuu_impl_pred_desc_##pred
+#define CUUTEST_PRED_not(pred)                                                 \
+    CUUTEST_PRED_COND_not, CUUTEST_PRED_DESC_not, CUUTEST_PRED_##pred
+#define CUUTEST_PRED_COND_not(actual, cond, desc, ...)                         \
+    !(cond(actual, __VA_ARGS__))
+#define CUUTEST_PRED_DESC_not(actual, cond, desc, ...)                         \
+    "not " desc(actual, __VA_ARGS__)
 
-// be(x, op, y)
-#define cuu_impl_pred_cond_be(actual, op, expected) ((actual)op(expected))
-#define cuu_impl_pred_desc_be(actual, op, expected)                            \
-#actual " " #op " " #expected
+// be(op, x)
+#define CUUTEST_PRED_be(op, x) CUUTEST_PRED_COND_be, CUUTEST_PRED_DESC_be, op, x
+#define CUUTEST_PRED_COND_be(actual, op, x) ((actual)op(x))
+#define CUUTEST_PRED_DESC_be(actual, op, x) #actual " " #op " " #x
 
-// be_near(x, y, err)
-#define cuu_impl_pred_cond_be_near(actual, expected, error)                    \
-    (((expected) - (error)) <= (actual) && (actual) <= ((expected) + (error)))
-#define cuu_impl_pred_desc_be_near(actual, expected, error)                    \
-#actual " ≃ " #expected "±" #error
+// be_a(x)
+#define CUUTEST_PRED_be_a(x) CUUTEST_PRED_be(==, x)
 
-// be_a(x, y)
-#define cuu_impl_pred_cond_be_a(actual, expected)                              \
-    cuu_impl_pred_cond_be((actual), ==, (expected))
-#define cuu_impl_pred_desc_be_a(actual, expected)                              \
-    cuu_impl_pred_desc_be(actual, ==, expected)
+// be_gt(x)
+#define CUUTEST_PRED_be_gt(x) CUUTEST_PRED_be(>, x)
 
-// be_gt(x, y)
-#define cuu_impl_pred_cond_be_gt(actual, expected)                             \
-    cuu_impl_pred_cond_be((actual), >, (expected))
-#define cuu_impl_pred_desc_be_gt(actual, expected)                             \
-    cuu_impl_pred_desc_be(actual, >, expected)
+// be_ge(x)
+#define CUUTEST_PRED_be_ge(x) CUUTEST_PRED_be(>=, x)
 
-// be_ge(x, y)
-#define cuu_impl_pred_cond_be_ge(actual, expected)                             \
-    cuu_impl_pred_cond_be((actual), >=, (expected))
-#define cuu_impl_pred_desc_be_ge(actual, expected)                             \
-    cuu_impl_pred_desc_be(actual, >=, expected)
+// be_lt(x)
+#define CUUTEST_PRED_be_lt(x) CUUTEST_PRED_be(<, x)
 
-// be_lt(x, y)
-#define cuu_impl_pred_cond_be_lt(actual, expected)                             \
-    cuu_impl_pred_cond_be((actual), <, (expected))
-#define cuu_impl_pred_desc_be_lt(actual, expected)                             \
-    cuu_impl_pred_desc_be(actual, <, expected)
+// be_le(x)
+#define CUUTEST_PRED_be_le(x) CUUTEST_PRED_be(<=, x)
 
-// be_le(x, y)
-#define cuu_impl_pred_cond_be_le(actual, expected)                             \
-    cuu_impl_pred_cond_be((actual), <=, (expected))
-#define cuu_impl_pred_desc_be_le(actual, expected)                             \
-    cuu_impl_pred_desc_be(actual, <=, expected)
+// be_near(x, err)
+#define CUUTEST_PRED_be_near(x, err)                                           \
+    CUUTEST_PRED_COND_be_near, CUUTEST_PRED_DESC_be_near, x, err
+#define CUUTEST_PRED_COND_be_near(actual, x, err)                              \
+    (((x) - (err)) <= (actual) && (actual) <= ((x) + (err)))
+#define CUUTEST_PRED_DESC_be_near(actual, x, err) #actual " ≃ " #x "±" #err
 
-// be_str(x, y)
+// be_str(expected)
+#define CUUTEST_PRED_be_str(expected)                                          \
+    CUUTEST_PRED_COND_be_str, CUUTEST_PRED_DESC_be_str, expected
+#define CUUTEST_PRED_COND_be_str(actual, expected)                             \
+    _Generic((actual), cuu_string_span                                         \
+             : cuu_impl_pred_cond_be_str_n, default                            \
+             : cuu_impl_pred_cond_be_str)((actual), (expected))
+#define CUUTEST_PRED_DESC_be_str(actual, expected) #actual " == " #expected
+
+typedef struct cuu_string_span {
+    const char *ptr;
+    size_t len;
+} cuu_string_span;
+
+cuu_string_span cuu_str_n(const char *ptr, size_t len);
+
 bool cuu_impl_pred_cond_be_str(const char *actual, const char *expected);
-#define cuu_impl_pred_desc_be_str(actual, expected) #actual " == " #expected
+bool cuu_impl_pred_cond_be_str_n(cuu_string_span actual, const char *expected);
 
-// be_str_n(x, n, y)
-bool cuu_impl_pred_cond_be_str_n(const char *actual, size_t actual_len,
-                                 const char *expected);
-#define cuu_impl_pred_desc_be_str_n(actual, actual_len, expected)              \
-#actual " == " #expected
+// contain(s)
+#define CUUTEST_PRED_contain(s)                                                \
+    CUUTEST_PRED_COND_contain, CUUTEST_PRED_DESC_contain, s
+#define CUUTEST_PRED_COND_contain(actual, s)                                   \
+    (cuu_impl_pred_cond_contain((actual), (s)))
+#define CUUTEST_PRED_DESC_contain(actual, s) #actual " contain " #s
 
-// contain(x, y)
-bool cuu_impl_pred_cond_contain(const char *actual, const char *expected);
-#define cuu_impl_pred_desc_contain(actual, expected)                           \
-#actual " contain " #expected
+bool cuu_impl_pred_cond_contain(const char *actual, const char *s);
 
-// start_with(x, prefix)
-bool cuu_impl_pred_cond_start_with(const char *actual,
-                                   const char *expected_prefix);
-#define cuu_impl_pred_desc_start_with(actual, expected_prefix)                 \
-#actual " start with " #expected_prefix
+// start_with(prefix)
+#define CUUTEST_PRED_start_with(prefix)                                        \
+    CUUTEST_PRED_COND_start_with, CUUTEST_PRED_DESC_start_with, prefix
+#define CUUTEST_PRED_COND_start_with(actual, prefix)                           \
+    (cuu_impl_pred_cond_start_with((actual), (prefix)))
+#define CUUTEST_PRED_DESC_start_with(actual, prefix)                           \
+#actual " start with " #prefix
 
-// end_with(x, suffix)
-bool cuu_impl_pred_cond_end_with(const char *actual,
-                                 const char *expected_suffix);
-#define cuu_impl_pred_desc_end_with(actual, expected_suffix)                   \
-#actual " end with " #expected_suffix
+bool cuu_impl_pred_cond_start_with(const char *actual, const char *prefix);
+
+// end_with(suffix)
+#define CUUTEST_PRED_end_with(suffix)                                          \
+    CUUTEST_PRED_COND_end_with, CUUTEST_PRED_DESC_end_with, suffix
+#define CUUTEST_PRED_COND_end_with(actual, suffix)                             \
+    (cuu_impl_pred_cond_end_with((actual), (suffix)))
+#define CUUTEST_PRED_DESC_end_with(actual, suffix) #actual " end with " #suffix
+
+bool cuu_impl_pred_cond_end_with(const char *actual, const char *suffix);
 
 #define cuu_describe cuu_group
 #define cuu_context cuu_group

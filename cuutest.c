@@ -195,6 +195,13 @@ bool cuu_impl_pred_cond_be_false(bool actual) { return !actual; }
 
 bool cuu_impl_pred_cond_be_null(const void *actual) { return actual == NULL; }
 
+cuu_string_span cuu_str_n(const char *ptr, size_t len) {
+    return (cuu_string_span){
+        .ptr = ptr,
+        .len = len,
+    };
+}
+
 bool cuu_impl_pred_cond_be_str(const char *actual, const char *expected) {
     assert(expected != NULL);
     if (actual == NULL)
@@ -202,20 +209,19 @@ bool cuu_impl_pred_cond_be_str(const char *actual, const char *expected) {
     return strcmp(actual, expected) == 0;
 }
 
-bool cuu_impl_pred_cond_be_str_n(const char *actual, size_t actual_len,
-                                 const char *expected) {
+bool cuu_impl_pred_cond_be_str_n(cuu_string_span actual, const char *expected) {
     assert(expected != NULL);
-    if (actual == NULL && actual_len > 0)
+    if (actual.ptr == NULL && actual.len > 0)
         return false;
-    return actual_len == strlen(expected) &&
-           strncmp(actual, expected, actual_len) == 0;
+    return actual.len == strlen(expected) &&
+           strncmp(actual.ptr, expected, actual.len) == 0;
 }
 
-bool cuu_impl_pred_cond_contain(const char *actual, const char *expected) {
-    assert(expected != NULL);
+bool cuu_impl_pred_cond_contain(const char *actual, const char *s) {
+    assert(s != NULL);
     if (actual == NULL)
         return false;
-    return strstr(actual, expected) != NULL;
+    return strstr(actual, s) != NULL;
 }
 
 bool cuu_impl_pred_cond_start_with(const char *actual,

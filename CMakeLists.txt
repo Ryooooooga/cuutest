@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0.0)
 
-set(CMAKE_C_STANDARD "99")
+set(CMAKE_C_STANDARD "11")
 set(CMAKE_C_FLAGS "-Wall -Wextra -Werror -pedantic")
 set(CMAKE_C_FLAGS_DEBUG "-g3 -O0")
 set(CMAKE_C_FLAGS_RELEASE "-O2 -DNDEBUG")
