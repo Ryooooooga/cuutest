@@ -202,14 +202,14 @@ cuu_string_span cuu_str_n(const char *ptr, size_t len) {
     };
 }
 
-bool cuu_impl_pred_cond_be_str(const char *actual, const char *expected) {
+bool cuu_impl_pred_cond_eq_str(const char *actual, const char *expected) {
     assert(expected != NULL);
     if (actual == NULL)
         return false;
     return strcmp(actual, expected) == 0;
 }
 
-bool cuu_impl_pred_cond_be_str_n(cuu_string_span actual, const char *expected) {
+bool cuu_impl_pred_cond_eq_str_n(cuu_string_span actual, const char *expected) {
     assert(expected != NULL);
     if (actual.ptr == NULL && actual.len > 0)
         return false;

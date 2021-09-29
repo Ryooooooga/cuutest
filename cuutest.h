@@ -123,20 +123,20 @@ bool cuu_impl_pred_cond_be_null(const void *actual);
 #define CUUTEST_PRED_COND_be(actual, op, x) ((actual)op(x))
 #define CUUTEST_PRED_DESC_be(actual, op, x) #actual " " #op " " #x
 
-// be_a(x)
-#define CUUTEST_PRED_be_a(x) CUUTEST_PRED_be(==, x)
+// eq(x)
+#define CUUTEST_PRED_eq(x) CUUTEST_PRED_be(==, x)
 
-// be_gt(x)
-#define CUUTEST_PRED_be_gt(x) CUUTEST_PRED_be(>, x)
+// gt(x)
+#define CUUTEST_PRED_gt(x) CUUTEST_PRED_be(>, x)
 
-// be_ge(x)
-#define CUUTEST_PRED_be_ge(x) CUUTEST_PRED_be(>=, x)
+// ge(x)
+#define CUUTEST_PRED_ge(x) CUUTEST_PRED_be(>=, x)
 
-// be_lt(x)
-#define CUUTEST_PRED_be_lt(x) CUUTEST_PRED_be(<, x)
+// lt(x)
+#define CUUTEST_PRED_lt(x) CUUTEST_PRED_be(<, x)
 
-// be_le(x)
-#define CUUTEST_PRED_be_le(x) CUUTEST_PRED_be(<=, x)
+// le(x)
+#define CUUTEST_PRED_le(x) CUUTEST_PRED_be(<=, x)
 
 // be_near(x, err)
 #define CUUTEST_PRED_be_near(x, err)                                           \
@@ -145,14 +145,14 @@ bool cuu_impl_pred_cond_be_null(const void *actual);
     (((x) - (err)) <= (actual) && (actual) <= ((x) + (err)))
 #define CUUTEST_PRED_DESC_be_near(actual, x, err) #actual " ≃ " #x "±" #err
 
-// be_str(expected)
-#define CUUTEST_PRED_be_str(expected)                                          \
-    CUUTEST_PRED_COND_be_str, CUUTEST_PRED_DESC_be_str, expected
-#define CUUTEST_PRED_COND_be_str(actual, expected)                             \
+// eq_str(expected)
+#define CUUTEST_PRED_eq_str(expected)                                          \
+    CUUTEST_PRED_COND_eq_str, CUUTEST_PRED_DESC_eq_str, expected
+#define CUUTEST_PRED_COND_eq_str(actual, expected)                             \
     _Generic((actual), cuu_string_span                                         \
-             : cuu_impl_pred_cond_be_str_n, default                            \
-             : cuu_impl_pred_cond_be_str)((actual), (expected))
-#define CUUTEST_PRED_DESC_be_str(actual, expected) #actual " == " #expected
+             : cuu_impl_pred_cond_eq_str_n, default                            \
+             : cuu_impl_pred_cond_eq_str)((actual), (expected))
+#define CUUTEST_PRED_DESC_eq_str(actual, expected) #actual " == " #expected
 
 typedef struct cuu_string_span {
     const char *ptr;
@@ -161,8 +161,8 @@ typedef struct cuu_string_span {
 
 cuu_string_span cuu_str_n(const char *ptr, size_t len);
 
-bool cuu_impl_pred_cond_be_str(const char *actual, const char *expected);
-bool cuu_impl_pred_cond_be_str_n(cuu_string_span actual, const char *expected);
+bool cuu_impl_pred_cond_eq_str(const char *actual, const char *expected);
+bool cuu_impl_pred_cond_eq_str_n(cuu_string_span actual, const char *expected);
 
 // contain(s)
 #define CUUTEST_PRED_contain(s)                                                \
