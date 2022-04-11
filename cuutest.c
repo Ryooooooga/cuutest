@@ -56,31 +56,29 @@ static void cuu_check_success(void) {
     assert(cuu_group_depth >= 0);
     assert(cuu_group_depth <= CUUTEST_MAX_GROUP_DEPTH);
 
-    cuu_groups[cuu_group_depth - 1].checks++;
+    cuu_groups[cuu_group_depth].checks++;
 }
 
 static void cuu_check_error(void) {
     assert(cuu_group_depth >= 0);
     assert(cuu_group_depth <= CUUTEST_MAX_GROUP_DEPTH);
 
-    cuu_groups[cuu_group_depth - 1].checks++;
-    cuu_groups[cuu_group_depth - 1].errors++;
+    cuu_groups[cuu_group_depth].checks++;
+    cuu_groups[cuu_group_depth].errors++;
 }
 
 static void cuu_push_group(void) {
     assert(cuu_group_depth < CUUTEST_MAX_GROUP_DEPTH);
 
+    cuu_group_depth++;
+
     cuu_groups[cuu_group_depth].start_time = clock();
     cuu_groups[cuu_group_depth].checks = 0;
     cuu_groups[cuu_group_depth].errors = 0;
-
-    cuu_group_depth++;
 }
 
 static void cuu_pop_group(struct cuu_group_result *result) {
     assert(cuu_group_depth > 0);
-
-    cuu_group_depth--;
 
     clock_t end_time = clock();
     clock_t start_time = cuu_groups[cuu_group_depth].start_time;
@@ -88,6 +86,8 @@ static void cuu_pop_group(struct cuu_group_result *result) {
     result->duration_ms = 1e3 * (end_time - start_time) / CLOCKS_PER_SEC;
     result->checks = cuu_groups[cuu_group_depth].checks;
     result->errors = cuu_groups[cuu_group_depth].errors;
+
+    cuu_group_depth--;
 }
 
 void cuu_impl_run_test(void (*test_func)(void), const char *test_name) {
